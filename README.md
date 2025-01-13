@@ -1,6 +1,6 @@
 ﻿# GRestaurante - Sistema de Gestão de Restaurante
 
-Repositório do projeto desenvolvido para a disciplina de Desenvolvimento Web I, uma disciplina do 1º semestre na Universidade da Maia. Desenvolvido pelo Grupo 10: Nuno Pereira [@nunotapxD](https://github.com/nunotapxD) .
+Repositório do projeto desenvolvido para a disciplina de Desenvolvimento Web I, uma disciplina do 1º semestre na Universidade da Maia. Desenvolvido pelo Grupo 10.
 
 ## Breve descrição do tema
 
@@ -65,4 +65,4 @@ GRestaurante é um sistema de gestão de restaurante desenvolvido com tecnologia
 
 ## Equipe
 * Nuno Pereira [@nunotapxD](https://github.com/nunotapxD)
-* Nuno Pereira [@nunotapxD](https://github.com/nunotapxD)
+* José Cantinho [@JoseMCC69](https://github.com/JoseMCC69)
