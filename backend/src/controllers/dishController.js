@@ -1,21 +1,21 @@
-const Dish = require('../models/Dish');
+const { Dish } = require('../models');
 
 const dishController = {
   async create(req, res) {
     try {
       const dish = await Dish.create(req.body);
-      res.status(201).json(dish);
+      return res.status(201).json(dish);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message });
     }
   },
 
   async findAll(req, res) {
     try {
       const dishes = await Dish.findAll();
-      res.json(dishes);
+      return res.json(dishes);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   },
 
@@ -25,9 +25,9 @@ const dishController = {
       if (!dish) {
         return res.status(404).json({ error: 'Dish not found' });
       }
-      res.json(dish);
+      return res.json(dish);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   },
 
@@ -38,9 +38,9 @@ const dishController = {
         return res.status(404).json({ error: 'Dish not found' });
       }
       await dish.update(req.body);
-      res.json(dish);
+      return res.json(dish);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message });
     }
   },
 
@@ -51,9 +51,9 @@ const dishController = {
         return res.status(404).json({ error: 'Dish not found' });
       }
       await dish.destroy();
-      res.status(204).send();
+      return res.status(204).send();
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   }
 };

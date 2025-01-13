@@ -1,7 +1,5 @@
-# Dockerfile
-FROM node:20
+FROM node:18-alpine
 
-# Cria o diretório da aplicação
 WORKDIR /app
 
 # Copia os arquivos de configuração
@@ -13,8 +11,8 @@ RUN npm install
 # Copia o código fonte
 COPY . .
 
-# Expõe a porta que a aplicação usa
-EXPOSE 3000
+# Expõe a porta 3001
+EXPOSE 3001
 
-# Comando para iniciar a aplicação
+# Inicia a aplicação
 CMD ["npm", "start"]

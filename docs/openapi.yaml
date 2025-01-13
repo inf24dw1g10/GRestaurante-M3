@@ -1,0 +1,442 @@
+openapi: 3.0.0
+info:
+  title: Sistema de Reservas para Restaurantes
+  description: API para gerenciamento de reservas em restaurantes
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desenvolvimento
+
+paths:
+  /api/customers:
+    post:
+      summary: Criar um novo cliente
+      description: Cria um novo registro de cliente no sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerInput'
+      responses:
+        '201':
+          description: Cliente criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          description: Dados inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: Listar todos os clientes
+      description: Retorna uma lista de todos os clientes cadastrados
+      responses:
+        '200':
+          description: Lista de clientes recuperada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/customers/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID do cliente
+    get:
+      summary: Obter cliente por ID
+      responses:
+        '200':
+          description: Cliente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Atualizar cliente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerInput'
+      responses:
+        '200':
+          description: Cliente atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Excluir cliente
+      responses:
+        '204':
+          description: Cliente excluído com sucesso
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/dishes:
+    post:
+      summary: Criar um novo prato
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DishInput'
+      responses:
+        '201':
+          description: Prato criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+    get:
+      summary: Listar todos os pratos
+      responses:
+        '200':
+          description: Lista de pratos recuperada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dish'
+
+  /api/tables:
+    post:
+      summary: Criar uma nova mesa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TableInput'
+      responses:
+        '201':
+          description: Mesa criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Table'
+    get:
+      summary: Listar todas as mesas
+      responses:
+        '200':
+          description: Lista de mesas recuperada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Table'
+
+  /api/tables/available:
+    get:
+      summary: Listar mesas disponíveis
+      responses:
+        '200':
+          description: Lista de mesas disponíveis
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Table'
+
+  /api/reservations:
+    post:
+      summary: Criar uma nova reserva
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationInput'
+      responses:
+        '201':
+          description: Reserva criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '400':
+          description: Dados inválidos ou mesa indisponível
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: Listar todas as reservas
+      responses:
+        '200':
+          description: Lista de reservas recuperada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservation'
+
+  /api/reservations/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID da reserva
+    get:
+      summary: Obter reserva por ID
+      responses:
+        '200':
+          description: Reserva encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Atualizar reserva
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationInput'
+      responses:
+        '200':
+          description: Reserva atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/reservations/{id}/cancel:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID da reserva
+    post:
+      summary: Cancelar reserva
+      responses:
+        '200':
+          description: Reserva cancelada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  schemas:
+    CustomerInput:
+      type: object
+      required:
+        - name
+        - email
+        - phone
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+          minLength: 8
+          maxLength: 20
+
+    Customer:
+      allOf:
+        - $ref: '#/components/schemas/CustomerInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+
+    DishInput:
+      type: object
+      required:
+        - name
+        - price
+        - category
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        description:
+          type: string
+        price:
+          type: number
+          minimum: 0
+        category:
+          type: string
+          enum: [starter, main, dessert, beverage]
+        isAvailable:
+          type: boolean
+          default: true
+
+    Dish:
+      allOf:
+        - $ref: '#/components/schemas/DishInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+
+    TableInput:
+      type: object
+      required:
+        - number
+        - capacity
+      properties:
+        number:
+          type: integer
+          minimum: 1
+        capacity:
+          type: integer
+          minimum: 1
+          maximum: 20
+        status:
+          type: string
+          enum: [available, reserved, occupied]
+          default: available
+
+    Table:
+      allOf:
+        - $ref: '#/components/schemas/TableInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+
+    ReservationInput:
+      type: object
+      required:
+        - tableId
+        - customerId
+        - date
+        - numberOfGuests
+      properties:
+        tableId:
+          type: integer
+        customerId:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        numberOfGuests:
+          type: integer
+          minimum: 1
+          maximum: 20
+        dishes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              quantity:
+                type: integer
+                minimum: 1
+              notes:
+                type: string
+
+    Reservation:
+      allOf:
+        - $ref: '#/components/schemas/ReservationInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+            status:
+              type: string
+              enum: [pending, confirmed, cancelled]
+            customer:
+              $ref: '#/components/schemas/Customer'
+            table:
+              $ref: '#/components/schemas/Table'
+            dishes:
+              type: array
+              items:
+                allOf:
+                  - $ref: '#/components/schemas/Dish'
+                  - type: object
+                    properties:
+                      ReservationDish:
+                        type: object
+                        properties:
+                          quantity:
+                            type: integer
+                          notes:
+                            type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+
+  responses:
+    NotFound:
+      description: O recurso solicitado não foi encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalError:
+      description: Erro interno do servidor
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
